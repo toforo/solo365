@@ -17,6 +17,8 @@
  */
 package org.b3log.solo.model;
 
+import org.b3log.latke.Latkes;
+
 /**
  * This class defines all common model relevant keys.
  *
@@ -356,5 +358,21 @@ public final class Common {
      * Private constructor.
      */
     private Common() {
+    }
+    
+    /**
+     * Latke upload mode.
+     * @author zhuangyilian
+     */
+    public enum UploadMode {
+
+        /**
+         * Upload to local URL.
+         */
+        LOCAL,
+        /**
+         * Upload to hacpai URL.
+         */
+        HACPAI,
     }
 }

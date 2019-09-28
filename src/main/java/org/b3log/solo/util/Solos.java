@@ -36,6 +36,7 @@ import org.b3log.latke.util.Strings;
 import org.b3log.solo.SoloServletListener;
 import org.b3log.solo.model.Article;
 import org.b3log.solo.model.Common;
+import org.b3log.solo.model.Common.UploadMode;
 import org.b3log.solo.model.UserExt;
 import org.b3log.solo.repository.UserRepository;
 import org.json.JSONObject;
@@ -138,6 +139,7 @@ public final class Solos {
         return new JSONObject().put(Keys.CODE, -1).put(Keys.MSG, "System is abnormal, please try again later");
     }
 
+    private static UploadMode uploadMode;
     private static long uploadTokenCheckTime;
     private static long uploadTokenTime;
     private static String uploadToken = "";
@@ -152,6 +154,22 @@ public final class Solos {
      */
     public static JSONObject getUploadToken(final RequestContext context) {
         try {
+            String uploadModeValue = Latkes.getLatkeProperty("uploadMode");
+            // upload to local
+            if (null != uploadModeValue) {
+        	    uploadMode = UploadMode.valueOf(uploadModeValue);
+            } else {
+                LOGGER.log(Level.TRACE, "Can't parse upload mode in latke.properties, default to [HACPAI]");
+
+                uploadMode = UploadMode.HACPAI;
+        	}
+        	if (UploadMode.LOCAL.equals(uploadMode)) {
+                return new JSONObject().
+                        put(Common.UPLOAD_TOKEN, "").
+                        put(Common.UPLOAD_URL, Latkes.getServePath() + "/blog/upload").
+                        put(Common.UPLOAD_MSG, "");
+            }
+
             final JSONObject currentUser = getCurrentUser(context.getRequest(), context.getResponse());
             if (null == currentUser) {
                 return null;

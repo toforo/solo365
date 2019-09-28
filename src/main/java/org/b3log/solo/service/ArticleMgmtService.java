@@ -184,6 +184,10 @@ public class ArticleMgmtService {
         if (!initService.isInited()) {
             return;
         }
+        
+        if (!"true".equals(Option.DefaultPreference.DEFAULT_PULL_GITHUB)) {
+        	return;
+        }
 
         final JSONObject preference = optionQueryService.getPreference();
         if (null == preference) {

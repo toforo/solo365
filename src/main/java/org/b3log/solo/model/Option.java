@@ -316,9 +316,9 @@ public final class Option {
         public static final String DEFAULT_SYNC_GITHUB = "true";
 
         /**
-         * Default enable sync pull GitHub.
+         * Default unable sync pull GitHub.
          */
-        public static final String DEFAULT_PULL_GITHUB = "true";
+        public static final String DEFAULT_PULL_GITHUB = "false";
 
         /**
          * Default favicon URL.

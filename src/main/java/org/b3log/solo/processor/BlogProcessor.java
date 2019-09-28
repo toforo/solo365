@@ -17,12 +17,17 @@
  */
 package org.b3log.solo.processor;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.ioc.Inject;
+import org.b3log.latke.logging.Level;
+import org.b3log.latke.logging.Logger;
 import org.b3log.latke.model.Pagination;
 import org.b3log.latke.model.User;
+import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.servlet.HttpMethod;
 import org.b3log.latke.servlet.RequestContext;
 import org.b3log.latke.servlet.annotation.RequestProcessing;
@@ -32,6 +37,8 @@ import org.b3log.solo.SoloServletListener;
 import org.b3log.solo.model.Article;
 import org.b3log.solo.model.Option;
 import org.b3log.solo.service.*;
+import org.b3log.solo.util.Files;
+import org.b3log.solo.util.Solos;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,6 +52,17 @@ import org.json.JSONObject;
 @RequestProcessor
 public class BlogProcessor {
 
+    /**
+     * Logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(BlogProcessor.class);
+    
+    /**
+     * Language service.
+     */
+    @Inject
+    private LangPropsService langPropsService;
+	
     /**
      * Article query service.
      */
@@ -180,6 +198,51 @@ public class BlogProcessor {
                     tagArray.put(tag);
                 }
             }
+        }
+    }
+    
+    /**
+     * Upload image or file.
+     * <p>
+     * Renders the response with a json object, for example,
+     * <pre>
+     * {
+     *     "sc": boolean,
+     *     "msg": ""
+     * }
+     * </pre>
+     * </p>
+     *
+     * @param context the specified request context
+     */
+    @RequestProcessing(value = "/blog/upload", method = HttpMethod.POST)
+    public void upload(final RequestContext context) {
+        final JsonRenderer renderer = new JsonRenderer();
+        context.setRenderer(renderer);
+        final JSONObject ret = new JSONObject();
+        renderer.setJSONObject(ret);
+        
+        if (!Solos.isLoggedIn(context)) {
+        	ret.put(Keys.STATUS_CODE, false);
+        	ret.put(Keys.MSG, "Need login");
+
+            return;
+        }
+        
+        try {
+        	final HttpServletRequest request = context.getRequest();
+        	JSONObject data = Files.upload(request, "/upload");
+        	
+            ret.put(Keys.STATUS_CODE, true);
+            ret.put(Keys.MSG, langPropsService.get("uploadSucc"));
+            ret.put(Keys.DATA, data);
+        } catch (final Exception e) {
+            LOGGER.log(Level.ERROR, e.getMessage(), e);
+
+            final JSONObject jsonObject = new JSONObject();
+            renderer.setJSONObject(jsonObject);
+            jsonObject.put(Keys.STATUS_CODE, false);
+            jsonObject.put(Keys.MSG, langPropsService.get("uploadFail"));
         }
     }
 }
