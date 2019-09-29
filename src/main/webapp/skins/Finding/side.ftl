@@ -20,11 +20,13 @@
 <div class="fn-clear">
     <span class="fn-right">
         <#if isLoggedIn>
-        <a href="${servePath}/admin-index.do#main" title="${adminLabel}" class="icon-setting"></a>
-        &nbsp; 
-        <a title="${logoutLabel}" class="icon-logout" href="${logoutURL}"></a>
+            <#if !isVisitor>
+            <a href="${servePath}/admin-index.do#main" title="${adminLabel}" class="icon-setting"></a>
+            &nbsp; 
+            </#if>
+            <a title="${logoutLabel}" class="icon-logout" href="${logoutURL}"></a>
         <#else>
-        <a href="${servePath}/start" title="${startToUseLabel}" class="icon-login"></a>
+            <a href="${servePath}/start" title="${startToUseLabel}" class="icon-login"></a>
         </#if>
     </span>
 </div>

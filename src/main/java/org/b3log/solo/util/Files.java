@@ -29,6 +29,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.RandomStringUtils;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.logging.Level;
 import org.b3log.latke.logging.Logger;
@@ -65,6 +66,7 @@ public final class Files {
         }
         String datePath = createDateDir(realPath);
         String fileName = null;
+        String localFileName = null;
         
         DiskFileItemFactory diskFileItemFactory = new DiskFileItemFactory();
         ServletFileUpload servletFileUpload = new ServletFileUpload(diskFileItemFactory);
@@ -77,10 +79,11 @@ public final class Files {
 
             try {
             	fileName = fileItem.getName();
-                String absFilePath = realPath + datePath + File.separator + fileName;
+            	localFileName = localFileName(fileName);
+                String absFilePath = realPath + datePath + File.separator + localFileName;
                 fileItem.write(new File(absFilePath));
                 
-                String fileUrl = Latkes.getServePath() + filePath + datePath.replace(File.separator, "/") + "/" + fileName;
+                String fileUrl = Latkes.getServePath() + filePath + datePath.replace(File.separator, "/") + "/" + localFileName;
                 succMap.put(fileName, fileUrl);
             } catch (Exception e) {
                 LOGGER.log(Level.ERROR, "Upload file failed", e);
@@ -117,6 +120,21 @@ public final class Files {
     	}
     	
     	return datePath;
+    }
+    
+    /**
+     * Build local file name.
+     * 
+     * @author zhuangyilian
+     * @param fileName
+     * @return return local file name
+     */
+    public static String localFileName(String fileName) {
+    	String[] fileNames = fileName.split("\\.");
+    	String preName = fileNames[0] + "-" + RandomStringUtils.randomNumeric(8);
+    	String localFileName = fileName.replace(fileNames[0], preName);
+    	
+    	return localFileName;
     }
 
     /**

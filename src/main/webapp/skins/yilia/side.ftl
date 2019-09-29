@@ -66,8 +66,10 @@
         <div class="vditor-reset">${noticeBoard}</div>
         </#if>
         <#if isLoggedIn>
+        <#if !isVisitor>
         <a href="${servePath}/admin-index.do#main" title="${adminLabel}" class="icon-setting"></a>
         &nbsp; &nbsp; 
+        </#if>
         <a title="${logoutLabel}" class="icon-logout" href="${logoutURL}"></a>
         <#else>
         <a href="${servePath}/start" title="${startToUseLabel}" class="icon-login"></a>

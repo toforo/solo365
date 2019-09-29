@@ -54,9 +54,11 @@
 
         <div class="header__login">
              <#if isLoggedIn>
+                 <#if !isVisitor>
                  <a href="${servePath}/admin-index.do#main" title="${adminLabel}">
                      <i class="icon__setting"></i> ${adminLabel}
                  </a>
+                 </#if>
                  <a href="${logoutURL}">
                      <i class="icon__logout"></i> ${logoutLabel}
                  </a>

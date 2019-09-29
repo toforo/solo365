@@ -28,9 +28,11 @@
             <small> &nbsp; ${blogSubtitle}</small>
             <div class="fn-right">
                 <#if isLoggedIn>
+                    <#if !isVisitor>
                     <a class="fn__flex-inline" href="${servePath}/admin-index.do#main" title="${adminLabel}">
                         <i class="icon-setting"></i>&nbsp;${adminLabel}
                     </a>
+	                </#if>
                     <a class="fn__flex-inline" href="${logoutURL}">
                         <i class="icon-logout"></i>&nbsp;${logoutLabel}
                     </a>

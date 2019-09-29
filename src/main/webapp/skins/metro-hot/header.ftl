@@ -51,8 +51,10 @@
     </ul>
     <div class="fn-right top-info">
         <#if isLoggedIn>
+            <#if !isVisitor>
             <a href="${servePath}/admin-index.do#main" title="${adminLabel}" data-ico="&#x0070;"></a>
             <hr>
+            </#if>
             <a href="${logoutURL}" title="${logoutLabel}" data-ico="&#xe040;"></a>
         <#else>
           <a href="${servePath}/start" title="${startToUseLabel}" data-ico="&#xe03f;"></a>

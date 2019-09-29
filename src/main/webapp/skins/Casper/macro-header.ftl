@@ -53,16 +53,18 @@
             </a>
 
             <#if isLoggedIn>
-            <a href="${servePath}/admin-index.do#main">
-                ${adminLabel}
-            </a>
-            <a href="${logoutURL}">
-                ${logoutLabel}
-            </a>
+                <#if !isVisitor>
+                <a href="${servePath}/admin-index.do#main">
+                    ${adminLabel}
+                </a>
+                </#if>
+                <a href="${logoutURL}">
+                    ${logoutLabel}
+                </a>
             <#else>
-            <a rel="alternate" href="${servePath}/start">
-                ${startToUseLabel}
-            </a>
+                <a rel="alternate" href="${servePath}/start">
+                    ${startToUseLabel}
+                </a>
             </#if>
         </div>
     </nav>

@@ -30,10 +30,12 @@
         </#list>
         <a class="ft__link" rel="alternate" href="${servePath}/rss.xml" rel="section">RSS</a>
         <#if isLoggedIn>
-        <a class="ft__link" href="${servePath}/admin-index.do#main" title="${adminLabel}">${adminLabel}</a>
-        <a class="ft__link" href="${logoutURL}">${logoutLabel}</a>
+            <#if !isVisitor>
+            <a class="ft__link" href="${servePath}/admin-index.do#main" title="${adminLabel}">${adminLabel}</a>
+	        </#if>
+	        <a class="ft__link" href="${logoutURL}">${logoutLabel}</a>
         <#else>
-        <a class="ft__link" href="${servePath}/start">${startToUseLabel}</a>
+        	<a class="ft__link" href="${servePath}/start">${startToUseLabel}</a>
         </#if>
     </nav>
     <div class="footer__border mobile__none"></div>

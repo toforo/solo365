@@ -98,11 +98,13 @@
                     <a href="${servePath}/search?keyword=">Search</a>
                 </li>
                 <#if isLoggedIn>
+                    <#if !isVisitor>
                     <li>
                         <a href="${servePath}/admin-index.do#main">
                             ${adminLabel}
                         </a>
                     </li>
+                    </#if>
                     <li>
                         <a href="${logoutURL}">
                             ${logoutLabel}

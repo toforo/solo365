@@ -694,7 +694,12 @@ public class DataModelService {
             }
             dataModel.put(Option.ID_C_META_DESCRIPTION, metaDescription);
             dataModel.put(Common.YEAR, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
-            dataModel.put(Common.IS_LOGGED_IN, null != Solos.getCurrentUser(context.getRequest(), context.getResponse()));
+            JSONObject currUser = Solos.getCurrentUser(context.getRequest(), context.getResponse());
+            dataModel.put(Common.IS_LOGGED_IN, null != currUser);
+            if (null != currUser) {
+            	dataModel.put(Common.IS_ADMIN, Role.ADMIN_ROLE.equals(currUser.getString(User.USER_ROLE)));
+            	dataModel.put(Common.IS_VISITOR, Role.VISITOR_ROLE.equals(currUser.getString(User.USER_ROLE)));
+            }
             dataModel.put(Common.FAVICON_API, Solos.FAVICON_API);
             final String noticeBoard = preference.getString(Option.ID_C_NOTICE_BOARD);
             dataModel.put(Option.ID_C_NOTICE_BOARD, noticeBoard);

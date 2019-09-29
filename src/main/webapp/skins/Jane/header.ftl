@@ -54,19 +54,21 @@
 
     <div>
          <#if isLoggedIn>
-         <a href="${servePath}/admin-index.do#main"
-            aria-label="${adminLabel}" class="vditor-tooltipped vditor-tooltipped__w">
-             <i class="icon__setting"></i>
-         </a>
-         <a href="${logoutURL}"
-            aria-label="${logoutLabel}" class="vditor-tooltipped vditor-tooltipped__w">
-             <i class="icon__logout"></i>
-         </a>
+             <#if !isVisitor>
+             <a href="${servePath}/admin-index.do#main"
+                aria-label="${adminLabel}" class="vditor-tooltipped vditor-tooltipped__w">
+                 <i class="icon__setting"></i>
+             </a>
+             </#if>
+             <a href="${logoutURL}"
+                aria-label="${logoutLabel}" class="vditor-tooltipped vditor-tooltipped__w">
+                 <i class="icon__logout"></i>
+             </a>
         <#else>
-        <a href="${servePath}/start"
-           aria-label="${startToUseLabel}" class="vditor-tooltipped vditor-tooltipped__w">
-            <i class="icon__login"></i>
-        </a>
+            <a href="${servePath}/start"
+               aria-label="${startToUseLabel}" class="vditor-tooltipped vditor-tooltipped__w">
+                <i class="icon__login"></i>
+            </a>
         </#if>
         <span onclick="Util.goTop()"
               aria-label="${putTopLabel}" class="vditor-tooltipped vditor-tooltipped__w">

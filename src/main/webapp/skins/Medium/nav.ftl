@@ -55,11 +55,13 @@
             RSS
         </a>
     <#if isLoggedIn>
+        <#if !isVisitor>
         <a href="${servePath}/admin-index.do#main">
             <svg>
                 <use xlink:href="#icon-setting"></use>
             </svg> ${adminLabel}
         </a>
+        </#if>
         <a href="${logoutURL}">
             <svg>
                 <use xlink:href="#icon-out"></use>
