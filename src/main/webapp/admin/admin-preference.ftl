@@ -150,12 +150,20 @@
         <input id="feedOutputCnt" class="normalInput" type="text"/>
         <label for="faviconURL">Favicon</label>
         <input id="faviconURL" class="normalInput" type="text"/>
+        <label for="bgmUrl">背景音乐</label>
+        <input id="bgmUrl" class="normalInput" type="text"/>
         <label for="customVars">${customVars1Label}</label>
         <input id="customVars" class="normalInput" type="text"/>
         <label>
             <div class="fn__flex-inline">
                 ${enableArticleUpdateHint1Label}
                 <input id="enableArticleUpdateHint" type="checkbox" class="normalInput"/>
+            </div>
+        </label>
+        <label>
+            <div class="fn__flex-inline">
+                ${useBgmLabel}
+                <input id="useBgm" type="checkbox" class="normalInput"/>
             </div>
         </label>
         <label>

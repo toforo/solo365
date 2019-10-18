@@ -205,7 +205,15 @@ public class PreferenceMgmtService {
             final JSONObject faviconURLOpt = optionRepository.get(Option.ID_C_FAVICON_URL);
             faviconURLOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_FAVICON_URL));
             optionRepository.update(Option.ID_C_FAVICON_URL, faviconURLOpt);
+            
+            final JSONObject bgmUrlOpt = optionRepository.get(Option.ID_C_BGM_URL);
+            bgmUrlOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_BGM_URL));
+            optionRepository.update(Option.ID_C_BGM_URL, bgmUrlOpt);
 
+            final JSONObject useBgmOpt = optionRepository.get(Option.ID_C_USE_BGM);
+            useBgmOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_USE_BGM));
+            optionRepository.update(Option.ID_C_USE_BGM, useBgmOpt);
+            
             final JSONObject syncGitHubOpt = optionRepository.get(Option.ID_C_SYNC_GITHUB);
             syncGitHubOpt.put(Option.OPTION_VALUE, preference.optString(Option.ID_C_SYNC_GITHUB));
             optionRepository.update(Option.ID_C_SYNC_GITHUB, syncGitHubOpt);

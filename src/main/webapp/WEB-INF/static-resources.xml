@@ -105,6 +105,7 @@
     <include path="/plugins/**/*.ogg"/>
 
     <include path="/upload/**/*"/>
+    <include path="/music/**/*"/>
     
     <include path="/CHANGE_LOGS.html"/>
     <include path="/LICENSE.txt"/>

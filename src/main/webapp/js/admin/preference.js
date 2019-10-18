@@ -75,6 +75,7 @@ admin.preference = {
         'true' === preference.enableArticleUpdateHint ? $('#enableArticleUpdateHint').attr('checked', 'checked') : $('#enableArticleUpdateHint').removeAttr('checked')
         'true' === preference.allowVisitDraftViaPermalink ? $('#allowVisitDraftViaPermalink').attr('checked', 'checked') : $('allowVisitDraftViaPermalink').removeAttr('checked')
         'true' === preference.commentable ? $('#commentable').attr('checked', 'checked') : $('commentable').removeAttr('checked')
+        'true' === preference.useBgm ? $('#useBgm').attr('checked', 'checked') : $('useBgm').removeAttr('checked')
         'true' === preference.syncGitHub ? $('#syncGitHub').attr('checked', 'checked') : $('syncGitHub').removeAttr('checked')
         'true' === preference.pullGitHub ? $('#pullGitHub').attr('checked', 'checked') : $('pullGitHub').removeAttr('checked')
 
@@ -91,6 +92,7 @@ admin.preference = {
         $('#feedOutputMode').val(preference.feedOutputMode)
         $('#feedOutputCnt').val(preference.feedOutputCnt)
         $('#faviconURL').val(preference.faviconURL)
+        $('#bgmUrl').val(preference.bgmUrl)
 
         $('#loadMsg').text('')
       },
@@ -224,9 +226,11 @@ admin.preference = {
         'feedOutputMode': $('#feedOutputMode').val(),
         'feedOutputCnt': $('#feedOutputCnt').val(),
         'faviconURL': $('#faviconURL').val(),
+        'bgmUrl': $('#bgmUrl').val(),
         'syncGitHub': $('#syncGitHub').prop('checked'),
         'pullGitHub': $('#pullGitHub').prop('checked'),
         'commentable': $('#commentable').prop('checked'),
+        'useBgm': $('#useBgm').prop('checked'),
         'customVars': $('#customVars').val(),
       },
     }

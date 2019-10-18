@@ -167,6 +167,16 @@ public final class Option {
      * Key of meta description.
      */
     public static final String ID_C_META_DESCRIPTION = "metaDescription";
+    
+    /**
+     * Key of bgm url.
+     */
+    public static final String ID_C_BGM_URL = "bgmUrl";
+    
+    /**
+     * Key of use bgm.
+     */
+    public static final String ID_C_USE_BGM = "useBgm";
 
     /**
      * Key of article update hint flag.
@@ -406,6 +416,16 @@ public final class Option {
          * Default meta description..
          */
         public static final String DEFAULT_META_DESCRIPTION = "A small and beautiful blogging system. 一款小而美的博客系统。";
+        
+        /**
+         * Default bgm url.
+         */
+        public static final String DEFAULT_BGM_URL = "../music/sakura_tears.mp3";
+        
+        /**
+         * Default use bgm.
+         */
+        public static final String DEFAULT_USE_BGM = "true";
 
         /**
          * Default HTML head to append.

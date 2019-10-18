@@ -518,6 +518,18 @@ public class InitService {
         metaKeywordsOpt.put(Option.OPTION_VALUE, DefaultPreference.DEFAULT_META_KEYWORDS);
         optionRepository.add(metaKeywordsOpt);
 
+        final JSONObject bgmUrlOpt = new JSONObject();
+        bgmUrlOpt.put(Keys.OBJECT_ID, Option.ID_C_BGM_URL);
+        bgmUrlOpt.put(Option.OPTION_CATEGORY, Option.CATEGORY_C_PREFERENCE);
+        bgmUrlOpt.put(Option.OPTION_VALUE, DefaultPreference.DEFAULT_BGM_URL);
+        optionRepository.add(bgmUrlOpt);
+        
+        final JSONObject useBgmOpt = new JSONObject();
+        useBgmOpt.put(Keys.OBJECT_ID, Option.ID_C_USE_BGM);
+        useBgmOpt.put(Option.OPTION_CATEGORY, Option.CATEGORY_C_PREFERENCE);
+        useBgmOpt.put(Option.OPTION_VALUE, DefaultPreference.DEFAULT_USE_BGM);
+        optionRepository.add(useBgmOpt);
+
         final JSONObject htmlHeadOpt = new JSONObject();
         htmlHeadOpt.put(Keys.OBJECT_ID, Option.ID_C_HTML_HEAD);
         htmlHeadOpt.put(Option.OPTION_CATEGORY, Option.CATEGORY_C_PREFERENCE);
@@ -673,7 +685,7 @@ public class InitService {
         mobileSkinDirNameOpt.put(Option.OPTION_CATEGORY, Option.CATEGORY_C_SKIN);
         mobileSkinDirNameOpt.put(Option.OPTION_VALUE, DefaultPreference.DEFAULT_MOBILE_SKIN_DIR_NAME);
         optionRepository.add(mobileSkinDirNameOpt);
-
+        
         LOGGER.info("Initialized preference");
     }
 }

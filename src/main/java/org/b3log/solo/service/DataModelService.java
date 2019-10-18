@@ -683,6 +683,8 @@ public class DataModelService {
             dataModel.put(Option.ID_C_BLOG_TITLE, preference.getString(Option.ID_C_BLOG_TITLE));
             dataModel.put(Option.ID_C_BLOG_SUBTITLE, preference.getString(Option.ID_C_BLOG_SUBTITLE));
             dataModel.put(Option.ID_C_HTML_HEAD, preference.getString(Option.ID_C_HTML_HEAD));
+            dataModel.put(Option.ID_C_BGM_URL, preference.getString(Option.ID_C_BGM_URL));
+            dataModel.put(Option.ID_C_USE_BGM, preference.getBoolean(Option.ID_C_USE_BGM));
             String metaKeywords = preference.getString(Option.ID_C_META_KEYWORDS);
             if (StringUtils.isBlank(metaKeywords)) {
                 metaKeywords = "";
