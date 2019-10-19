@@ -238,6 +238,7 @@ public class ArticleQueryService {
                 final JSONObject article = articleArray.optJSONObject(i);
                 article.put(Article.ARTICLE_CREATE_TIME, article.optLong(Article.ARTICLE_CREATED));
                 article.put(Article.ARTICLE_T_CREATE_DATE, new Date(article.optLong(Article.ARTICLE_CREATED)));
+                article.put(Article.ARTICLE_T_PUBLISH_DATE, new Date(article.optLong(Article.ARTICLE_PUBLISHED)));
                 article.put(Article.ARTICLE_T_UPDATE_DATE, new Date(article.optLong(Article.ARTICLE_UPDATED)));
                 articles.add(article);
             }
@@ -609,6 +610,7 @@ public class ArticleQueryService {
             for (final JSONObject article : articles) {
                 article.put(Article.ARTICLE_CREATE_TIME, article.getLong(Article.ARTICLE_CREATED));
                 article.put(Article.ARTICLE_T_CREATE_DATE, new Date(article.getLong(Article.ARTICLE_CREATED)));
+                article.put(Article.ARTICLE_T_PUBLISH_DATE, new Date(article.optLong(Article.ARTICLE_PUBLISHED)));
                 article.put(Article.ARTICLE_T_UPDATE_DATE, new Date(article.optLong(Article.ARTICLE_UPDATED)));
                 retArticles.add(article);
             }
@@ -658,6 +660,7 @@ public class ArticleQueryService {
             for (final JSONObject article : articles) {
                 article.put(Article.ARTICLE_CREATE_TIME, article.getLong(Article.ARTICLE_CREATED));
                 article.put(Article.ARTICLE_T_CREATE_DATE, new Date(article.getLong(Article.ARTICLE_CREATED)));
+                article.put(Article.ARTICLE_T_PUBLISH_DATE, new Date(article.optLong(Article.ARTICLE_PUBLISHED)));
                 article.put(Article.ARTICLE_T_UPDATE_DATE, new Date(article.optLong(Article.ARTICLE_UPDATED)));
                 ret.add(article);
             }
@@ -853,6 +856,7 @@ public class ArticleQueryService {
                 final JSONObject article = articles.getJSONObject(i);
                 article.put(Article.ARTICLE_CREATE_TIME, article.getLong(Article.ARTICLE_CREATED));
                 article.put(Article.ARTICLE_T_CREATE_DATE, new Date(article.optLong(Article.ARTICLE_CREATED)));
+                article.put(Article.ARTICLE_T_PUBLISH_DATE, new Date(article.optLong(Article.ARTICLE_PUBLISHED)));
                 article.put(Article.ARTICLE_T_UPDATE_DATE, new Date(article.optLong(Article.ARTICLE_UPDATED)));
             }
 

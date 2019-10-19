@@ -184,10 +184,6 @@ public class ArticleMgmtService {
         if (!initService.isInited()) {
             return;
         }
-        
-        if (!"true".equals(Option.DefaultPreference.DEFAULT_PULL_GITHUB)) {
-        	return;
-        }
 
         final JSONObject preference = optionQueryService.getPreference();
         if (null == preference) {
@@ -545,8 +541,12 @@ public class ArticleMgmtService {
 
             article.put(Article.ARTICLE_COMMENT_COUNT, article.optInt(Article.ARTICLE_COMMENT_COUNT));
             article.put(Article.ARTICLE_VIEW_COUNT, 0);
+            final long now = System.currentTimeMillis();
             if (!article.has(Article.ARTICLE_CREATED)) {
-                article.put(Article.ARTICLE_CREATED, System.currentTimeMillis());
+                article.put(Article.ARTICLE_CREATED, now);
+            }
+            if (Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(Article.ARTICLE_STATUS)) {
+            	article.put(Article.ARTICLE_PUBLISHED, now);
             }
             article.put(Article.ARTICLE_UPDATED, article.optLong(Article.ARTICLE_CREATED));
             article.put(Article.ARTICLE_PUT_TOP, false);

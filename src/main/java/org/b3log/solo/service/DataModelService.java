@@ -921,6 +921,7 @@ public class DataModelService {
             final String authorId = author.getString(Keys.OBJECT_ID);
             article.put(Common.AUTHOR_ID, authorId);
             article.put(Article.ARTICLE_T_CREATE_DATE, new Date(article.optLong(Article.ARTICLE_CREATED)));
+            article.put(Article.ARTICLE_T_PUBLISH_DATE, new Date(article.optLong(Article.ARTICLE_PUBLISHED)));
             article.put(Article.ARTICLE_T_UPDATE_DATE, new Date(article.optLong(Article.ARTICLE_UPDATED)));
 
             final String userAvatar = author.optString(UserExt.USER_AVATAR);

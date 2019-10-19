@@ -266,6 +266,7 @@ public class InitService {
         final JSONObject admin = userRepository.getAdmin();
         final long now = System.currentTimeMillis();
         article.put(Article.ARTICLE_CREATED, now);
+        article.put(Article.ARTICLE_PUBLISHED, now);
         article.put(Article.ARTICLE_UPDATED, now);
         article.put(Article.ARTICLE_PUT_TOP, false);
         article.put(Article.ARTICLE_RANDOM_DOUBLE, Math.random());

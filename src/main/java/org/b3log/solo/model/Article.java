@@ -77,7 +77,22 @@ public final class Article {
      * Key of create time.
      */
     public static final String ARTICLE_CREATE_TIME = "articleCreateTime";
+    
+    /**
+     * Key of published at.
+     */
+    public static final String ARTICLE_PUBLISHED = "articlePublished";
 
+    /**
+     * Key of publish date.
+     */
+    public static final String ARTICLE_T_PUBLISH_DATE = "articlePublishDate";
+
+    /**
+     * Key of publish time.
+     */
+    public static final String ARTICLE_PUBLISH_TIME = "articlePublishTime";
+    
     /**
      * Key of updated at.
      */

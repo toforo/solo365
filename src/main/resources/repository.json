@@ -460,6 +460,11 @@
           "type": "long"
         },
         {
+          "name": "articlePublished",
+          "description": "文章发布时间戳",
+          "type": "long"
+        },
+        {
           "name": "articleUpdated",
           "description": "文章更新时间戳",
           "type": "long"
