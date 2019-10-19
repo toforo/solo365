@@ -354,7 +354,8 @@ public class ArticleMgmtService {
         try {
             final JSONObject article = articleRepository.get(articleId);
             article.put(ARTICLE_STATUS, ARTICLE_STATUS_C_DRAFT);
-            articleRepository.update(articleId, article, ARTICLE_STATUS);
+            article.put(ARTICLE_PUBLISHED, 0L);
+            articleRepository.update(articleId, article, ARTICLE_STATUS, ARTICLE_PUBLISHED);
 
             transaction.commit();
         } catch (final Exception e) {
@@ -463,10 +464,16 @@ public class ArticleMgmtService {
 
             final boolean postToCommunity = article.optBoolean(Common.POST_TO_COMMUNITY);
             article.remove(Common.POST_TO_COMMUNITY);
+            
+            final boolean publishNewArticle = Article.ARTICLE_STATUS_C_DRAFT == oldArticle.optInt(ARTICLE_STATUS) && Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(ARTICLE_STATUS);
+            if (publishNewArticle) {
+            	article.put(Article.ARTICLE_PUBLISHED, now);
+            }
+            
             articleRepository.update(articleId, article);
+            
             article.put(Common.POST_TO_COMMUNITY, postToCommunity);
 
-            final boolean publishNewArticle = Article.ARTICLE_STATUS_C_DRAFT == oldArticle.optInt(ARTICLE_STATUS) && Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(ARTICLE_STATUS);
             final JSONObject eventData = new JSONObject();
             eventData.put(ARTICLE, article);
             if (publishNewArticle) {
@@ -547,6 +554,8 @@ public class ArticleMgmtService {
             }
             if (Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(Article.ARTICLE_STATUS)) {
             	article.put(Article.ARTICLE_PUBLISHED, now);
+            } else {
+            	article.put(Article.ARTICLE_PUBLISHED, 0L);
             }
             article.put(Article.ARTICLE_UPDATED, article.optLong(Article.ARTICLE_CREATED));
             article.put(Article.ARTICLE_PUT_TOP, false);
