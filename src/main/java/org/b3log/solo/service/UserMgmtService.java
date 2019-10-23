@@ -40,6 +40,8 @@ import org.b3log.solo.repository.UserRepository;
 import org.b3log.solo.util.Solos;
 import org.json.JSONObject;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -197,6 +199,11 @@ public class UserMgmtService {
             if (StringUtils.isNotBlank(userGitHubId)) {
                 oldUser.put(UserExt.USER_GITHUB_ID, userGitHubId);
             }
+            
+            final String userQQId = requestJSONObject.optString(UserExt.USER_QQ_ID);
+            if (StringUtils.isNotBlank(userQQId)) {
+                oldUser.put(UserExt.USER_QQ_ID, userQQId);
+            }
 
             userRepository.update(oldUserId, oldUser);
             transaction.commit();
@@ -280,6 +287,9 @@ public class UserMgmtService {
             }
             final JSONObject user = new JSONObject();
             user.put(User.USER_NAME, userName);
+            
+            final String userInitName = requestJSONObject.optString(UserExt.USER_INIT_NAME);
+            user.put(UserExt.USER_INIT_NAME, userInitName);
 
             String userURL = requestJSONObject.optString(User.USER_URL);
             if (StringUtils.isBlank(userURL)) {
@@ -298,6 +308,9 @@ public class UserMgmtService {
 
             final String userGitHubId = requestJSONObject.optString(UserExt.USER_GITHUB_ID);
             user.put(UserExt.USER_GITHUB_ID, userGitHubId);
+            
+            final String userQQId = requestJSONObject.optString(UserExt.USER_QQ_ID);
+            user.put(UserExt.USER_QQ_ID, userQQId);
 
             final String userB3Key = requestJSONObject.optString(UserExt.USER_B3_KEY);
             user.put(UserExt.USER_B3_KEY, userB3Key);
@@ -314,6 +327,41 @@ public class UserMgmtService {
             LOGGER.log(Level.ERROR, "Adds a user failed", e);
             throw new ServiceException(e);
         }
+    }
+    
+    /**
+     * Gets an unduplicatedUserName
+     * 
+     * @author zhuangyilian
+     * @param userName
+     * @return
+     * @throws RepositoryException
+     */
+    public String getUnduplicatedUserName (final String userName) {
+        try {
+            JSONObject duplicatedUser = userRepository.getByUserName(userName);
+            if (null == duplicatedUser) {
+                return userName;
+            }
+            
+            List<JSONObject> duplicatedUsers = userRepository.getByUserInitName(userName);
+            final int num = duplicatedUsers.size() + 1;
+            final int maxNum = num + 100;
+            String unduplicatedUserName = null;
+            JSONObject unduplicatedUser = null;
+            for (int i = num; i < maxNum; i++) {
+                unduplicatedUserName = userName + ".No" + i;
+                unduplicatedUser = userRepository.getByUserName(unduplicatedUserName);
+                if (null != unduplicatedUser) {
+                    continue;
+                }
+                return unduplicatedUserName;
+            }
+        } catch (RepositoryException e) {
+            LOGGER.log(Level.ERROR, "Gets an unduplicatedUserName failed", e);
+        }
+        
+        return null;
     }
 
     /**

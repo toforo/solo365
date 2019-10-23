@@ -53,6 +53,16 @@ public final class UserExt {
      * Key of GitHub open id.
      */
     public static final String USER_GITHUB_ID = "userGitHubId";
+    
+    /**
+     * Key of QQ open id.
+     */
+    public static final String USER_QQ_ID = "userQQId";
+    
+    /**
+     * Key of initial user name.
+     */
+    public static final String USER_INIT_NAME = "userInitName";
 
     /**
      * Checks whether the specified name is invalid.
@@ -74,15 +84,15 @@ public final class UserExt {
             return true;
         }
 
-        char c;
-        for (int i = 0; i < length; i++) {
-            c = name.charAt(i);
-            if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || '-' == c) {
-                continue;
-            }
-
-            return true;
-        }
+//        char c;
+//        for (int i = 0; i < length; i++) {
+//            c = name.charAt(i);
+//            if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || '-' == c) {
+//                continue;
+//            }
+//
+//            return true;
+//        }
 
         return StringUtils.containsIgnoreCase(name, "admin");
     }

@@ -263,6 +263,11 @@ public final class Common {
      * Key of is visitor.
      */
     public static final String IS_VISITOR = "isVisitor";
+    
+    /**
+     * Key of exist admin.
+     */
+    public static final String EXIST_ADMIN = "existAdmin";
 
     /**
      * Key of URI.

@@ -309,6 +309,24 @@ public final class Solos {
 
         return null;
     }
+    
+    /**
+     * Exist admin user.
+     *
+     * @return exist admin user
+     */
+    public static boolean existAdmin() {
+    	final BeanManager beanManager = BeanManager.getInstance();
+    	final UserRepository userRepository = beanManager.getReference(UserRepository.class);
+    	JSONObject admin = null;
+    	try {
+            admin = userRepository.getAdmin();
+    	} catch (final Exception e) {
+    		LOGGER.log(Level.TRACE, "Exist admin user failed");
+    	}
+    	
+    	return admin != null;
+    }
 
     /**
      * Logins the specified user from the specified request.

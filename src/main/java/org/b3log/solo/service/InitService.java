@@ -416,11 +416,13 @@ public class InitService {
         final JSONObject admin = new JSONObject();
 
         admin.put(User.USER_NAME, requestJSONObject.getString(User.USER_NAME));
+        admin.put(UserExt.USER_INIT_NAME, requestJSONObject.getString(User.USER_NAME));
         admin.put(User.USER_URL, Latkes.getServePath());
         admin.put(User.USER_ROLE, Role.ADMIN_ROLE);
         admin.put(UserExt.USER_AVATAR, requestJSONObject.optString(UserExt.USER_AVATAR));
         admin.put(UserExt.USER_B3_KEY, requestJSONObject.optString(UserExt.USER_B3_KEY));
         admin.put(UserExt.USER_GITHUB_ID, requestJSONObject.optString(UserExt.USER_GITHUB_ID));
+        admin.put(UserExt.USER_QQ_ID, "");
         userRepository.add(admin);
 
         LOGGER.info("Initialized admin");

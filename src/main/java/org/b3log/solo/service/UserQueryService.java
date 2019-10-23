@@ -81,6 +81,22 @@ public class UserQueryService {
             return null;
         }
     }
+    
+    /**
+     * Gets a user by the specified QQ id.
+     *
+     * @param qqId the specified QQ id
+     * @return user, returns {@code null} if not found
+     */
+    public JSONObject getUserByQQId(final String qqId) {
+    	try {
+    		return userRepository.getFirst(new Query().setFilter(new PropertyFilter(UserExt.USER_QQ_ID, FilterOperator.EQUAL, qqId)));
+    	} catch (final Exception e) {
+    		LOGGER.log(Level.ERROR, "Gets a user by QQ id [" + qqId + "] failed", e);
+    		
+    		return null;
+    	}
+    }
 
     /**
      * Gets the administrator.

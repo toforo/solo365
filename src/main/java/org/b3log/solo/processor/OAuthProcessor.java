@@ -38,6 +38,7 @@ import org.b3log.latke.util.URLs;
 import org.b3log.solo.model.UserExt;
 import org.b3log.solo.service.*;
 import org.b3log.solo.util.GitHubs;
+import org.b3log.solo.util.QQs;
 import org.b3log.solo.util.Solos;
 import org.json.JSONObject;
 
@@ -49,8 +50,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * OAuth processor.
  * <ul>
- * <li>Redirects to auth page (/oauth/github/redirect), GET</li>
- * <li>OAuth callback (/oauth/github), GET</li>
+ * <li>Redirects to auth page, GET</li>
+ * <li>OAuth callback, GET</li>
  * </ul>
  *
  * @author <a href="http://88250.b3log.org">Liang Ding</a>
@@ -107,7 +108,7 @@ public class OAuthProcessor {
     private LangPropsService langPropsService;
 
     /**
-     * Redirects to auth page.
+     * Redirects to github auth page.
      *
      * @param context the specified context
      */
@@ -147,7 +148,7 @@ public class OAuthProcessor {
     }
 
     /**
-     * OAuth callback.
+     * Github OAuth callback.
      *
      * @param context the specified context
      */
@@ -174,6 +175,7 @@ public class OAuthProcessor {
         final HttpServletRequest request = context.getRequest();
         final String openId = userInfo.optString("openId");
         final String userName = userInfo.optString(User.USER_NAME);
+    final String userInitName = userInfo.optString(User.USER_NAME);
         final String userAvatar = userInfo.optString(UserExt.USER_AVATAR);
 
         JSONObject user = userQueryService.getUserByGitHubId(openId);
@@ -181,6 +183,7 @@ public class OAuthProcessor {
             if (!initService.isInited()) {
                 final JSONObject initReq = new JSONObject();
                 initReq.put(User.USER_NAME, userName);
+                initReq.put(UserExt.USER_INIT_NAME, userInitName);
                 initReq.put(UserExt.USER_AVATAR, userAvatar);
                 initReq.put(UserExt.USER_B3_KEY, openId);
                 initReq.put(UserExt.USER_GITHUB_ID, openId);
@@ -190,6 +193,7 @@ public class OAuthProcessor {
                 if (null == user) {
                     final JSONObject addUserReq = new JSONObject();
                     addUserReq.put(User.USER_NAME, userName);
+                    addUserReq.put(UserExt.USER_INIT_NAME, userInitName);
                     addUserReq.put(UserExt.USER_AVATAR, userAvatar);
                     addUserReq.put(User.USER_ROLE, Role.VISITOR_ROLE);
                     addUserReq.put(UserExt.USER_GITHUB_ID, openId);
@@ -236,6 +240,121 @@ public class OAuthProcessor {
             return;
         }
 
+        final String redirect = StringUtils.substringBeforeLast(referer, "__");
+        Solos.login(user, response);
+        context.sendRedirect(redirect);
+        LOGGER.log(Level.INFO, "Logged in [name={0}, remoteAddr={1}] with oauth", userName, Requests.getRemoteAddr(request));
+    }
+    
+    /**
+     * Redirects to QQ auth page.
+     *
+     * @param context the specified context
+     */
+    @RequestProcessing(value = "/oauth/qq/redirect", method = HttpMethod.GET)
+    public void redirectQQAuth(final RequestContext context) {
+        final String loginAuthURL = "https://graph.qq.com/oauth2.0/authorize";
+        final String clientId = Latkes.getLocalProperty("qq.appId");
+        final String cb = Latkes.getServePath() + "/oauth/qq";
+        String referer = context.param("referer");
+        if (StringUtils.isBlank(referer)) {
+            referer = Latkes.getServePath();
+        }
+        String state = referer + ":::" + RandomStringUtils.randomAlphanumeric(16) + ":::cb=" + cb + ":::";
+        STATES.add(state);
+        
+        final String path = loginAuthURL + "?response_type=code&client_id=" + clientId + "&redirect_uri=" + URLs.encode(cb) + "&state=" + URLs.encode(state);
+        
+        context.sendRedirect(path);
+    }
+    
+    /**
+     * QQ OAuth callback.
+     *
+     * @param context the specified context
+     */
+    @RequestProcessing(value = "/oauth/qq", method = HttpMethod.GET)
+    public synchronized void qqAuthCallback(final RequestContext context) {
+        // QQ授权回调
+        String state = context.param("state");
+        if (!STATES.contains(state)) {
+            context.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            
+            return;
+        }
+        STATES.remove(state);
+        final String referer = URLs.decode(state);
+        final String code = context.param("code");
+        
+        final JSONObject tokenData = QQs.qqAccessToken(code);
+        final String accessToken = tokenData.optString("access_token");
+//        final String expiresIn = tokenData.optString("expires_in");
+//        final String refreshToken = tokenData.optString("refresh_token");
+        
+        if (StringUtils.isBlank(accessToken)) {
+            LOGGER.log(Level.WARN, "Can't get access token");
+            context.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            
+            return;
+        }
+        
+        JSONObject openIdData = QQs.getQQOpenId(accessToken);
+        final String openId = openIdData.optString("openid");
+        
+        final JSONObject userInfo = QQs.getQQUserInfo(accessToken, openId);
+        if (null == userInfo) {
+            LOGGER.log(Level.WARN, "Can't get user info with token [" + tokenData + "]");
+            context.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            
+            return;
+        }
+        
+        final HttpServletResponse response = context.getResponse();
+        final HttpServletRequest request = context.getRequest();
+        final String userName = userMgmtService.getUnduplicatedUserName(userInfo.optString("nickname"));
+        final String userInitName = userInfo.optString("nickname");
+        final String userAvatar = userInfo.optString("figureurl_qq_2");
+        
+        JSONObject user = userQueryService.getUserByQQId(openId);
+        if (null == user) {
+            if (!initService.isInited()) {
+                final JSONObject initReq = new JSONObject();
+                initReq.put(User.USER_NAME, userName);
+                initReq.put(UserExt.USER_INIT_NAME, userInitName);
+                initReq.put(UserExt.USER_AVATAR, userAvatar);
+                initReq.put(UserExt.USER_B3_KEY, openId);
+                initReq.put(UserExt.USER_QQ_ID, openId);
+                initService.init(initReq);
+            } else {
+                final JSONObject addUserReq = new JSONObject();
+                addUserReq.put(User.USER_NAME, userName);
+                addUserReq.put(UserExt.USER_INIT_NAME, userInitName);
+                addUserReq.put(UserExt.USER_AVATAR, userAvatar);
+                addUserReq.put(User.USER_ROLE, Role.VISITOR_ROLE);
+                addUserReq.put(UserExt.USER_B3_KEY, openId);
+                addUserReq.put(UserExt.USER_QQ_ID, openId);
+                try {
+                    userMgmtService.addUser(addUserReq);
+                } catch (final Exception e) {
+                    LOGGER.log(Level.ERROR, "Registers via oauth failed", e);
+                    context.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    
+                    return;
+                }
+            }
+        } else {
+            // 同步更新用户名
+//            user.put(User.USER_NAME, userName);
+//            try {
+//                userMgmtService.updateUser(user);
+//            } catch (final Exception e) {
+//                LOGGER.log(Level.ERROR, "Updates user name failed", e);
+//                context.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//                
+//                return;
+//            }
+        }
+        
         final String redirect = StringUtils.substringBeforeLast(referer, "__");
         Solos.login(user, response);
         context.sendRedirect(redirect);

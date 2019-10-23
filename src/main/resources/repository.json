@@ -356,6 +356,12 @@
           "length": 255
         },
         {
+          "name": "userInitName",
+          "description": "初始用户名",
+          "type": "String",
+          "length": 255
+        },
+        {
           "name": "userURL",
           "description": "用户链接地址",
           "type": "String",
@@ -382,6 +388,12 @@
         {
           "name": "userGitHubId",
           "description": "用户 GitHub Open Id",
+          "type": "String",
+          "length": 32
+        },
+        {
+          "name": "userQQId",
+          "description": "用户 QQ Open Id",
           "type": "String",
           "length": 32
         }

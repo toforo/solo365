@@ -17,6 +17,8 @@
  */
 package org.b3log.solo.repository;
 
+import java.util.List;
+
 import org.b3log.latke.Keys;
 import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.model.Role;
@@ -24,6 +26,7 @@ import org.b3log.latke.model.User;
 import org.b3log.latke.repository.*;
 import org.b3log.latke.repository.annotation.Repository;
 import org.b3log.solo.cache.UserCache;
+import org.b3log.solo.model.UserExt;
 import org.json.JSONObject;
 
 /**
@@ -94,6 +97,17 @@ public class UserRepository extends AbstractRepository {
      */
     public JSONObject getByUserName(final String userName) throws RepositoryException {
         return getFirst(new Query().setFilter(new PropertyFilter(User.USER_NAME, FilterOperator.EQUAL, userName)));
+    }
+    
+    /**
+     * Gets most users by the specified initial username.
+     *
+     * @param userInitName the specified initial username
+     * @return a list of most users, returns an empty list if not found
+     * @throws RepositoryException repository exception
+     */
+    public List<JSONObject> getByUserInitName(final String userInitName) throws RepositoryException {
+    	return getList(new Query().setFilter(new PropertyFilter(UserExt.USER_INIT_NAME, FilterOperator.EQUAL, userInitName)));
     }
 
     /**

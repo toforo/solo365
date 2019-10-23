@@ -185,6 +185,7 @@ public class IndexProcessor {
         dataModel.put(Common.STATIC_RESOURCE_VERSION, Latkes.getStaticResourceVersion());
         dataModel.put(Common.YEAR, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
         dataModel.put(Common.REFERER, URLs.encode(referer));
+        dataModel.put(Common.EXIST_ADMIN, Solos.existAdmin());
         Keys.fillRuntime(dataModel);
         dataModelService.fillMinified(dataModel);
         dataModelService.fillFaviconURL(dataModel, optionQueryService.getPreference());
