@@ -539,6 +539,34 @@
           "legnth": 20
         }
       ]
+    },
+    {
+      "name": "accesslog",
+      "description": "访问日志",
+      "keys": [
+        {
+          "name": "oId",
+          "description": "主键",
+          "type": "String",
+          "length": 64
+        },
+        {
+          "name": "accessAddress",
+          "description": "访问地址",
+          "type": "String",
+          "legnth": 32
+        },
+                {
+          "name": "accessCount",
+          "description": "访问次数",
+          "type": "int"
+        },
+        {
+          "name": "accessLastTime",
+          "description": "上次访问时间",
+          "type": "long"
+        }
+      ]
     }
   ]
 }

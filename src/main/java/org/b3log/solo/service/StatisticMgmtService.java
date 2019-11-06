@@ -30,6 +30,7 @@ import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.URLs;
 import org.b3log.solo.cache.StatisticCache;
 import org.b3log.solo.model.Option;
+import org.b3log.solo.repository.AccessLogRepository;
 import org.b3log.solo.repository.ArticleRepository;
 import org.b3log.solo.repository.OptionRepository;
 import org.b3log.solo.util.Solos;
@@ -93,6 +94,12 @@ public class StatisticMgmtService {
      */
     @Inject
     private ArticleRepository articleRepository;
+    
+    /**
+     * Access log management service.
+     */
+    @Inject
+    private AccessLogMgmtService accessLogService;
 
     /**
      * Statistic cache.
@@ -264,6 +271,15 @@ public class StatisticMgmtService {
 
         final String remoteAddr = Requests.getRemoteAddr(request);
         LOGGER.log(Level.DEBUG, "Current request [IP={0}]", remoteAddr);
+        Long remainTimeMillis = ONLINE_VISITORS.get(remoteAddr);
+        if (null == remainTimeMillis) {
+        	LOGGER.log(Level.INFO, "Current access address [IP={0}]", remoteAddr);
+        	try {
+				accessLogService.updateAccessLogByAddress(remoteAddr);
+			} catch (ServiceException e) {
+				LOGGER.log(Level.ERROR, "Increases access count failed", e);
+			}
+        }
         ONLINE_VISITORS.put(remoteAddr, System.currentTimeMillis());
         LOGGER.log(Level.DEBUG, "Current online visitor count [{0}]", ONLINE_VISITORS.size());
     }

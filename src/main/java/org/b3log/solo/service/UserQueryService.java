@@ -241,4 +241,45 @@ public class UserQueryService {
 
         return Latkes.getContextPath() + "/start?referer=" + to;
     }
+    
+    /**
+     * Gets an unduplicatedUserName
+     * 
+     * @author zhuangyilian
+     * @param userName
+     * @param openId
+     * @return
+     * @throws RepositoryException
+     */
+    public String getUnduplicatedUserName (final String userName, final String openId) {
+        try {
+        	JSONObject existUser = getUserByQQId(openId);
+        	if (null != existUser) {
+        		return existUser.optString(User.USER_NAME);
+        	}
+        	
+            existUser = userRepository.getByUserName(userName);
+            if (null == existUser) {
+                return userName;
+            }
+            
+            List<JSONObject> duplicatedUsers = userRepository.getByUserInitName(userName);
+            final int num = duplicatedUsers.size() + 1;
+            final int maxNum = num + 100;
+            String unduplicatedUserName = null;
+            JSONObject unduplicatedUser = null;
+            for (int i = num; i < maxNum; i++) {
+                unduplicatedUserName = userName + ".No" + i;
+                unduplicatedUser = userRepository.getByUserName(unduplicatedUserName);
+                if (null != unduplicatedUser) {
+                    continue;
+                }
+                return unduplicatedUserName;
+            }
+        } catch (RepositoryException e) {
+            LOGGER.log(Level.ERROR, "Gets an unduplicatedUserName failed", e);
+        }
+        
+        return null;
+    }
 }

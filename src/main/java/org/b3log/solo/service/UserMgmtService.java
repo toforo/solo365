@@ -40,8 +40,6 @@ import org.b3log.solo.repository.UserRepository;
 import org.b3log.solo.util.Solos;
 import org.json.JSONObject;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -277,7 +275,7 @@ public class UserMgmtService {
                 throw new ServiceException(langPropsService.get("userNameInvalidLabel"));
             }
 
-            JSONObject duplicatedUser = userRepository.getByUserName(userName);
+            final JSONObject duplicatedUser = userRepository.getByUserName(userName);
             if (null != duplicatedUser) {
                 if (transaction.isActive()) {
                     transaction.rollback();
@@ -327,41 +325,6 @@ public class UserMgmtService {
             LOGGER.log(Level.ERROR, "Adds a user failed", e);
             throw new ServiceException(e);
         }
-    }
-    
-    /**
-     * Gets an unduplicatedUserName
-     * 
-     * @author zhuangyilian
-     * @param userName
-     * @return
-     * @throws RepositoryException
-     */
-    public String getUnduplicatedUserName (final String userName) {
-        try {
-            JSONObject duplicatedUser = userRepository.getByUserName(userName);
-            if (null == duplicatedUser) {
-                return userName;
-            }
-            
-            List<JSONObject> duplicatedUsers = userRepository.getByUserInitName(userName);
-            final int num = duplicatedUsers.size() + 1;
-            final int maxNum = num + 100;
-            String unduplicatedUserName = null;
-            JSONObject unduplicatedUser = null;
-            for (int i = num; i < maxNum; i++) {
-                unduplicatedUserName = userName + ".No" + i;
-                unduplicatedUser = userRepository.getByUserName(unduplicatedUserName);
-                if (null != unduplicatedUser) {
-                    continue;
-                }
-                return unduplicatedUserName;
-            }
-        } catch (RepositoryException e) {
-            LOGGER.log(Level.ERROR, "Gets an unduplicatedUserName failed", e);
-        }
-        
-        return null;
     }
 
     /**

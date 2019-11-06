@@ -311,7 +311,7 @@ public class OAuthProcessor {
         
         final HttpServletResponse response = context.getResponse();
         final HttpServletRequest request = context.getRequest();
-        final String userName = userMgmtService.getUnduplicatedUserName(userInfo.optString("nickname"));
+        final String userName = userQueryService.getUnduplicatedUserName(userInfo.optString("nickname"), openId);
         final String userInitName = userInfo.optString("nickname");
         final String userAvatar = userInfo.optString("figureurl_qq_2");
         
