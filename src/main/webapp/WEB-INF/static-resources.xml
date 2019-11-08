@@ -68,6 +68,7 @@
     <include path="/skins/**/*.ttf"/>
     <include path="/skins/**/*.woff"/>
     <include path="/skins/**/*.cur"/>
+    <include path="/skins/**/*.txt"/>
 
     <include path="/scss/**.css"/>
     <include path="/scss/**/*.css"/>
