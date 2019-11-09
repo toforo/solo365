@@ -132,7 +132,7 @@
         return xhr.status === okStatus ? xhr.responseText : null;
     }
     function showBg() {
-        let srcs = load("/skins/Bubble365/bg.txt").split("\r\n");   // 加载文件内的背景图地址(站内站外均可)
+        let srcs = load("/skins/Bubble365/bg.txt").split("\r\n");   // 加载文件内的背景图地址
         let count = srcs.length;    // 背景图数量
         let step = 60 * 5;   // 背景图切换频率(秒)
         //let num = Math.floor(Math.random() * count);
