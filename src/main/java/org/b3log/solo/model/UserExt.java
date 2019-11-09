@@ -63,6 +63,11 @@ public final class UserExt {
      * Key of initial user name.
      */
     public static final String USER_INIT_NAME = "userInitName";
+    
+    /**
+     * Key of user password.
+     */
+    public static final String USER_PASSWORD = "userPassword";
 
     /**
      * Checks whether the specified name is invalid.

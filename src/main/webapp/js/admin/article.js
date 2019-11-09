@@ -80,7 +80,7 @@ admin.article = {
 
         $('#articleCommentable').
           prop('checked', result.article.articleCommentable)
-
+          
         // signs
         var signs = result.article.signs
         $('.signs button').each(function (i) {
@@ -237,6 +237,7 @@ admin.article = {
           'articleCommentable': $('#articleCommentable').prop('checked'),
           'articleViewPwd': $('#viewPwd').val(),
           'postToCommunity': $('#postToCommunity').prop('checked'),
+          'silentUpdate': $('#silentUpdate').prop('checked'),
         },
       }
 
@@ -302,20 +303,26 @@ admin.article = {
 
     // set button status
     if (this.status) {
+      // published
       if (this.status.isArticle) {
         $('#unSubmitArticle').show()
         $('#saveArticle').hide()
         $('#submitArticle').show()
+        $('#silentUpdatePanel').show()
+      // draft
       } else {
         $('#submitArticle').show()
         $('#unSubmitArticle').hide()
         $('#saveArticle').show()
+        $('#silentUpdatePanel').hide()
       }
+    // create
     } else {
       $('#submitArticle').show()
       $('#unSubmitArticle').hide()
       $('#saveArticle').show()
       $('#postToCommunityPanel').show()
+      $('#silentUpdatePanel').hide()
     }
   },
   /**
@@ -340,6 +347,7 @@ admin.article = {
     $('#permalink').val('')
     $('#articleCammentable').prop('checked', true)
     $('#postToCommunity').prop('checked', false)
+    $('#silentUpdate').prop('checked', false)
     $('.signs button').each(function (i) {
       if (i === 0) {
         this.className = 'selected'

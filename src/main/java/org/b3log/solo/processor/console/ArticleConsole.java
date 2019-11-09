@@ -456,7 +456,8 @@ public class ArticleConsole {
      *         "articleSignId": "" // optional
      *         "articleCommentable": boolean,
      *         "articleViewPwd": "",
-     *         "postToCommunity": boolean
+     *         "postToCommunity": boolean,
+     *         "silentUpdate": boolean,
      *     }
      *  }
      * </pre>

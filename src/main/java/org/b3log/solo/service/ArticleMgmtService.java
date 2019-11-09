@@ -436,8 +436,6 @@ public class ArticleMgmtService {
 
             processTagsForArticleUpdate(oldArticle, article);
 
-            archiveDate(article);
-
             if (!oldArticle.getString(Article.ARTICLE_PERMALINK).equals(permalink)) { // The permalink has been updated
                 // Updates related comments' links
                 processCommentsForArticleUpdate(article);
@@ -447,14 +445,20 @@ public class ArticleMgmtService {
             fillAutoProperties(oldArticle, article);
             // Set date
             article.put(ARTICLE_UPDATED, oldArticle.getLong(ARTICLE_UPDATED));
+            
             final long now = System.currentTimeMillis();
+            final boolean updatePublishedArticle = Article.ARTICLE_STATUS_C_PUBLISHED == oldArticle.optInt(ARTICLE_STATUS);
+            final boolean silentUpdate = article.optBoolean(Common.SILENT_UPDATE);
+            article.remove(Common.SILENT_UPDATE);
+            if (updatePublishedArticle && !silentUpdate) {
+            	archiveDate(article);
+            	article.put(ARTICLE_UPDATED, now);
+            }
 
             // The article to update has no sign
             if (!article.has(Article.ARTICLE_SIGN_ID)) {
                 article.put(Article.ARTICLE_SIGN_ID, "0");
             }
-
-            article.put(ARTICLE_UPDATED, now);
 
             final String articleImg1URL = getArticleImg1URL(article);
             article.put(ARTICLE_IMG1_URL, articleImg1URL);
@@ -465,8 +469,8 @@ public class ArticleMgmtService {
             final boolean postToCommunity = article.optBoolean(Common.POST_TO_COMMUNITY);
             article.remove(Common.POST_TO_COMMUNITY);
             
-            final boolean publishNewArticle = Article.ARTICLE_STATUS_C_DRAFT == oldArticle.optInt(ARTICLE_STATUS) && Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(ARTICLE_STATUS);
-            if (publishNewArticle) {
+            final boolean publishArticle = Article.ARTICLE_STATUS_C_DRAFT == oldArticle.optInt(ARTICLE_STATUS) && Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(ARTICLE_STATUS);
+            if (publishArticle) {
             	article.put(Article.ARTICLE_PUBLISHED, now);
             }
             
@@ -476,7 +480,7 @@ public class ArticleMgmtService {
 
             final JSONObject eventData = new JSONObject();
             eventData.put(ARTICLE, article);
-            if (publishNewArticle) {
+            if (publishArticle) {
                 eventManager.fireEventAsynchronously(new Event<>(EventTypes.ADD_ARTICLE, eventData));
             } else {
                 eventManager.fireEventAsynchronously(new Event<>(EventTypes.UPDATE_ARTICLE, eventData));
@@ -500,6 +504,112 @@ public class ArticleMgmtService {
 
             throw new ServiceException(e.getMessage());
         }
+    }
+    
+    /**
+     * Modifies an article by the specified request json object.
+     *
+     * @param requestJSONObject the specified request json object, for example,
+     *                          {
+     *                          "article": {
+     *                          "oId": "",
+     *                          "articleTitle": "",
+     *                          "articleAbstract": "",
+     *                          "articleContent": "",
+     *                          "articleTags": "tag1,tag2,tag3", // optional, default set "待分类"
+     *                          "articlePermalink": "", // optional
+     *                          "articleStatus": int, // 0: published, 1: draft
+     *                          "articleSignId": "", // optional
+     *                          "articleCommentable": boolean,
+     *                          "articleViewPwd": ""
+     *                          }
+     *                          }
+     * @throws ServiceException service exception
+     */
+    public void modifyArticle(final JSONObject requestJSONObject) throws ServiceException {
+    	final Transaction transaction = articleRepository.beginTransaction();
+    	
+    	try {
+    		final JSONObject article = requestJSONObject.getJSONObject(ARTICLE);
+    		String tagsString = article.optString(Article.ARTICLE_TAGS_REF);
+    		tagsString = Tag.formatTags(tagsString, 4);
+    		if (StringUtils.isBlank(tagsString)) {
+    			tagsString = "待分类";
+    		}
+    		article.put(Article.ARTICLE_TAGS_REF, tagsString);
+    		
+    		final String articleId = article.getString(Keys.OBJECT_ID);
+    		// Set permalink
+    		final JSONObject oldArticle = articleRepository.get(articleId);
+    		final String permalink = getPermalinkForUpdateArticle(oldArticle, article, oldArticle.optLong(ARTICLE_CREATED));
+    		article.put(ARTICLE_PERMALINK, permalink);
+    		
+    		processTagsForArticleUpdate(oldArticle, article);
+    		
+    		archiveDate(article);
+    		
+    		if (!oldArticle.getString(Article.ARTICLE_PERMALINK).equals(permalink)) { // The permalink has been updated
+    			// Updates related comments' links
+    			processCommentsForArticleUpdate(article);
+    		}
+    		
+    		// Fill auto properties
+    		fillAutoProperties(oldArticle, article);
+    		// Set date
+    		article.put(ARTICLE_UPDATED, oldArticle.getLong(ARTICLE_UPDATED));
+    		final long now = System.currentTimeMillis();
+    		
+    		// The article to update has no sign
+    		if (!article.has(Article.ARTICLE_SIGN_ID)) {
+    			article.put(Article.ARTICLE_SIGN_ID, "0");
+    		}
+    		
+    		article.put(ARTICLE_UPDATED, now);
+    		
+    		final String articleImg1URL = getArticleImg1URL(article);
+    		article.put(ARTICLE_IMG1_URL, articleImg1URL);
+    		
+    		final String articleAbstractText = Article.getAbstractText(article);
+    		article.put(ARTICLE_ABSTRACT_TEXT, articleAbstractText);
+    		
+    		final boolean postToCommunity = article.optBoolean(Common.POST_TO_COMMUNITY);
+    		article.remove(Common.POST_TO_COMMUNITY);
+    		
+    		final boolean publishNewArticle = Article.ARTICLE_STATUS_C_DRAFT == oldArticle.optInt(ARTICLE_STATUS) && Article.ARTICLE_STATUS_C_PUBLISHED == article.optInt(ARTICLE_STATUS);
+    		if (publishNewArticle) {
+    			article.put(Article.ARTICLE_PUBLISHED, now);
+    		}
+    		
+    		articleRepository.update(articleId, article);
+    		
+    		article.put(Common.POST_TO_COMMUNITY, postToCommunity);
+    		
+    		final JSONObject eventData = new JSONObject();
+    		eventData.put(ARTICLE, article);
+    		if (publishNewArticle) {
+    			eventManager.fireEventAsynchronously(new Event<>(EventTypes.ADD_ARTICLE, eventData));
+    		} else {
+    			eventManager.fireEventAsynchronously(new Event<>(EventTypes.UPDATE_ARTICLE, eventData));
+    		}
+    		
+    		transaction.commit();
+    	} catch (final ServiceException e) {
+    		if (transaction.isActive()) {
+    			transaction.rollback();
+    		}
+    		
+    		LOGGER.log(Level.ERROR, "Updates an article failed", e);
+    		
+    		throw e;
+    	} catch (final Exception e) {
+    		if (transaction.isActive()) {
+    			transaction.rollback();
+    		}
+    		
+    		LOGGER.log(Level.ERROR, "Updates an article failed", e);
+    		
+    		throw new ServiceException(e.getMessage());
+    	}
     }
 
     /**

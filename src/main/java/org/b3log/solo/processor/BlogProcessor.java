@@ -166,6 +166,7 @@ public class BlogProcessor {
 
         excludes.put(Article.ARTICLE_CONTENT);
         excludes.put(Article.ARTICLE_UPDATED);
+        excludes.put(Article.ARTICLE_PUBLISHED);
         excludes.put(Article.ARTICLE_CREATED);
         excludes.put(Article.ARTICLE_AUTHOR_ID);
         excludes.put(Article.ARTICLE_RANDOM_DOUBLE);

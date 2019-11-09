@@ -19,6 +19,8 @@ package org.b3log.solo.util;
 
 import jodd.http.HttpRequest;
 import jodd.http.HttpResponse;
+
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
@@ -93,6 +95,11 @@ public final class Solos {
      * Cookie HTTP only.
      */
     public static final boolean COOKIE_HTTP_ONLY;
+    
+    /**
+     * MD5 salt.
+     */
+    public static final String MD5_SALT = "$1$solo";
 
     static {
         ResourceBundle solo;
@@ -489,6 +496,16 @@ public final class Solos {
     }
 
     /**
+     * Gets md5 password.
+     *
+     * @param password the specified password
+     * @return md5 password,
+     */
+    public static String getMd5Password(final String password) {
+        return Md5Crypt.md5Crypt(password.getBytes(), MD5_SALT);
+    }
+    
+    /**
      * Builds pagination request with the specified path.
      *
      * @param path the specified path, "/{page}/{pageSize}/{windowSize}"
@@ -502,16 +519,16 @@ public final class Solos {
      * </pre>
      */
     public static JSONObject buildPaginationRequest(final String path) {
-        final Integer currentPageNum = getCurrentPageNum(path);
-        final Integer pageSize = getPageSize(path);
-        final Integer windowSize = getWindowSize(path);
-
-        final JSONObject ret = new JSONObject();
-        ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, currentPageNum);
-        ret.put(Pagination.PAGINATION_PAGE_SIZE, pageSize);
-        ret.put(Pagination.PAGINATION_WINDOW_SIZE, windowSize);
-
-        return ret;
+    	final Integer currentPageNum = getCurrentPageNum(path);
+    	final Integer pageSize = getPageSize(path);
+    	final Integer windowSize = getWindowSize(path);
+    	
+    	final JSONObject ret = new JSONObject();
+    	ret.put(Pagination.PAGINATION_CURRENT_PAGE_NUM, currentPageNum);
+    	ret.put(Pagination.PAGINATION_PAGE_SIZE, pageSize);
+    	ret.put(Pagination.PAGINATION_WINDOW_SIZE, windowSize);
+    	
+    	return ret;
     }
 
     /**

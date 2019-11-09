@@ -151,6 +151,7 @@ admin.userList = {
         $('#userURLUpdate').val(result.user.userURL)
         $('#userAvatarUpdate').val(result.user.userAvatar)
         $('#userB3KeyUpdate').val(result.user.userB3Key)
+        $('#userPasswordUpdate').val(result.user.userPassword)
         $('#userNameUpdate').val(result.user.userName).data('userInfo', {
           'oId': id,
           'userRole': userRole,
@@ -176,6 +177,7 @@ admin.userList = {
         'userRole': userInfo.userRole,
         'userAvatar': $('#userAvatarUpdate').val(),
         'userB3Key': $('#userB3KeyUpdate').val(),
+        'userPassword': $('#userPasswordUpdate').val(),
       }
 
       $.ajax({

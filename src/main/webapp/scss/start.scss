@@ -306,6 +306,18 @@ input[type=text]:focus {
     display: block;
 }
 
+#login {
+    position: relative;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.login__text {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
 /* start search */
 .search {
     border-top: 5px solid #e6e5d9;

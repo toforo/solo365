@@ -17,6 +17,7 @@
  */
 package org.b3log.solo.processor;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
@@ -24,6 +25,7 @@ import org.b3log.latke.ioc.Inject;
 import org.b3log.latke.logging.Level;
 import org.b3log.latke.logging.Logger;
 import org.b3log.latke.model.Pagination;
+import org.b3log.latke.model.User;
 import org.b3log.latke.service.LangPropsService;
 import org.b3log.latke.service.ServiceException;
 import org.b3log.latke.servlet.HttpMethod;
@@ -31,16 +33,22 @@ import org.b3log.latke.servlet.RequestContext;
 import org.b3log.latke.servlet.annotation.RequestProcessing;
 import org.b3log.latke.servlet.annotation.RequestProcessor;
 import org.b3log.latke.servlet.renderer.AbstractFreeMarkerRenderer;
+import org.b3log.latke.servlet.renderer.JsonRenderer;
 import org.b3log.latke.util.Locales;
 import org.b3log.latke.util.Paginator;
+import org.b3log.latke.util.Requests;
 import org.b3log.latke.util.URLs;
 import org.b3log.solo.SoloServletListener;
+import org.b3log.solo.model.Article;
 import org.b3log.solo.model.Common;
 import org.b3log.solo.model.Option;
+import org.b3log.solo.model.UserExt;
+import org.b3log.solo.processor.console.ConsoleRenderer;
 import org.b3log.solo.service.DataModelService;
 import org.b3log.solo.service.InitService;
 import org.b3log.solo.service.OptionQueryService;
 import org.b3log.solo.service.StatisticMgmtService;
+import org.b3log.solo.service.UserQueryService;
 import org.b3log.solo.util.Skins;
 import org.b3log.solo.util.Solos;
 import org.json.JSONObject;
@@ -91,6 +99,12 @@ public class IndexProcessor {
      */
     @Inject
     private StatisticMgmtService statisticMgmtService;
+    
+    /**
+     * User query service.
+     */
+    @Inject
+    private UserQueryService userQueryService;
 
     /**
      * Initialization service.
@@ -191,6 +205,84 @@ public class IndexProcessor {
         dataModelService.fillFaviconURL(dataModel, optionQueryService.getPreference());
         dataModelService.fillUsite(dataModel);
         Solos.addGoogleNoIndex(context);
+    }
+    
+    /**
+     * Shows login page.
+     *
+     * @param context the specified context
+     */
+    @RequestProcessing(value = "/login", method = HttpMethod.GET)
+    public void showLogin(final RequestContext context) {
+    	if (initService.isInited() && null != Solos.getCurrentUser(context.getRequest(), context.getResponse())) {
+    		context.sendRedirect(Latkes.getServePath());
+    		
+    		return;
+    	}
+    	
+    	String referer = context.header("referer");
+    	if (StringUtils.isBlank(referer) || !isInternalLinks(referer)) {
+    		referer = Latkes.getServePath();
+    	}
+    	
+    	final AbstractFreeMarkerRenderer renderer = new SkinRenderer(context, "common-template/login.ftl");
+    	final Map<String, Object> dataModel = renderer.getDataModel();
+    	final HttpServletRequest request = context.getRequest();
+    	final Map<String, String> langs = langPropsService.getAll(Locales.getLocale(request));
+    	dataModel.putAll(langs);
+    	dataModel.put(Common.VERSION, SoloServletListener.VERSION);
+    	dataModel.put(Common.STATIC_RESOURCE_VERSION, Latkes.getStaticResourceVersion());
+    	dataModel.put(Common.YEAR, String.valueOf(Calendar.getInstance().get(Calendar.YEAR)));
+    	dataModel.put(Common.REFERER, URLs.encode(referer));
+    	dataModel.put(Common.EXIST_ADMIN, Solos.existAdmin());
+    	final String msg = context.param(Keys.MSG);
+    	if (StringUtils.isNotBlank(msg)) {
+    		dataModel.put(Keys.MSG, langPropsService.get("userNameOrPwdErrorLabel"));
+    	}
+    	
+    	Keys.fillRuntime(dataModel);
+    	dataModelService.fillMinified(dataModel);
+    	dataModelService.fillFaviconURL(dataModel, optionQueryService.getPreference());
+    	dataModelService.fillUsite(dataModel);
+    	Solos.addGoogleNoIndex(context);
+    }
+    
+    /**
+     * Login.
+     *
+     * @param context the specified context
+     */
+    @RequestProcessing(value = "/login", method = HttpMethod.POST)
+    public void login(final RequestContext context) {
+    	if (initService.isInited() && null != Solos.getCurrentUser(context.getRequest(), context.getResponse())) {
+    		context.sendRedirect(Latkes.getServePath());
+    		
+    		return;
+    	}
+    	
+    	String userName = context.param(User.USER_NAME);
+    	String password = context.param(UserExt.USER_PASSWORD);
+    	if (StringUtils.isBlank(userName) || StringUtils.isBlank(password)) {
+            LOGGER.log(Level.WARN, "Can't get user info with username [" + userName + "] and password [" + password + "]");
+            context.sendRedirect(Latkes.getServePath() + "/login?msg=1");
+        	
+            return;
+    	}
+    	
+    	JSONObject user = userQueryService.getUserByNameAndPassword(userName, password);
+    	if (null == user) {
+            LOGGER.log(Level.WARN, "Can't get user info with username [" + userName + "] and password [" + password + "]");
+            context.sendRedirect(Latkes.getServePath() + "/login?msg=1");
+        	
+            return;
+    	}
+    	
+        final HttpServletRequest request = context.getRequest();
+    	final HttpServletResponse response = context.getResponse();
+
+        Solos.login(user, response);
+        context.sendRedirect(Latkes.getServePath());
+        LOGGER.log(Level.INFO, "Logged in [name={0}, remoteAddr={1}] with username and password", userName, Requests.getRemoteAddr(request));
     }
 
     /**

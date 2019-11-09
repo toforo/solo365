@@ -17,6 +17,7 @@
  */
 package org.b3log.solo.service;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
 import org.b3log.latke.ioc.Inject;
@@ -34,6 +35,7 @@ import org.b3log.latke.util.Paginator;
 import org.b3log.latke.util.URLs;
 import org.b3log.solo.model.UserExt;
 import org.b3log.solo.repository.UserRepository;
+import org.b3log.solo.util.Solos;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -127,6 +129,23 @@ public class UserQueryService {
 
             return null;
         }
+    }
+    
+    /**
+     * Gets a user by the specified username and password.
+     *
+     * @param userName the specified username
+     * @param password the specified password
+     * @return user, returns {@code null} if not found
+     */
+    public JSONObject getUserByNameAndPassword(final String userName, final String password) {
+    	try {
+    		return userRepository.getByUserNameAndPassword(userName, Solos.getMd5Password(password));
+    	} catch (final RepositoryException e) {
+    		LOGGER.log(Level.ERROR, "Gets a user by username [" + userName + "] and password [" + password + "] failed", e);
+    		
+    		return null;
+    	}
     }
 
     /**

@@ -26,6 +26,8 @@
 <div id="userUpdate" class="fn__none form form__no-table">
     <label for="userNameUpdate">${userName1Label}<span style="color: #991a1a">${changeUserNameTipLabel}</span></label>
     <input id="userNameUpdate" type="text"/>
+    <label for="userPasswordUpdate">${userPassword1Label}</label>
+    <input id="userPasswordUpdate" type="text"/>
     <label for="userURLUpdate">${userURL1Label}</label>
     <input id="userURLUpdate" type="text"/>
     <label for="userAvatarUpdate">${userAvatar1Label}</label>

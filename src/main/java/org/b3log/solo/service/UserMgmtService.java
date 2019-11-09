@@ -19,6 +19,8 @@ package org.b3log.solo.service;
 
 import jodd.http.HttpRequest;
 import jodd.http.HttpResponse;
+
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang.StringUtils;
 import org.b3log.latke.Keys;
 import org.b3log.latke.Latkes;
@@ -202,6 +204,11 @@ public class UserMgmtService {
             if (StringUtils.isNotBlank(userQQId)) {
                 oldUser.put(UserExt.USER_QQ_ID, userQQId);
             }
+            
+            final  String userPassword = requestJSONObject.optString(UserExt.USER_PASSWORD);
+            if (StringUtils.isNotBlank(userPassword)) {
+            	oldUser.put(UserExt.USER_PASSWORD, Solos.getMd5Password(userPassword));
+            }
 
             userRepository.update(oldUserId, oldUser);
             transaction.commit();
@@ -288,6 +295,13 @@ public class UserMgmtService {
             
             final String userInitName = requestJSONObject.optString(UserExt.USER_INIT_NAME);
             user.put(UserExt.USER_INIT_NAME, userInitName);
+            
+            final String userPassword = requestJSONObject.optString(UserExt.USER_PASSWORD);
+            if (StringUtils.isNotBlank(userPassword)) {
+            	user.put(UserExt.USER_PASSWORD, Solos.getMd5Password(userPassword));
+            } else {
+            	user.put(UserExt.USER_PASSWORD, userPassword);
+            }
 
             String userURL = requestJSONObject.optString(User.USER_URL);
             if (StringUtils.isBlank(userURL)) {

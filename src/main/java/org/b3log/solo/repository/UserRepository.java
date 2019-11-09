@@ -109,6 +109,19 @@ public class UserRepository extends AbstractRepository {
     public List<JSONObject> getByUserInitName(final String userInitName) throws RepositoryException {
     	return getList(new Query().setFilter(new PropertyFilter(UserExt.USER_INIT_NAME, FilterOperator.EQUAL, userInitName)));
     }
+    
+    /**
+     * Gets a user by the specified username and password.
+     *
+     * @param userName the specified username
+     * @param password the specified password
+     * @return user, returns {@code null} if not found
+     * @throws RepositoryException repository exception
+     */
+    public JSONObject getByUserNameAndPassword(final String userName, final String password) throws RepositoryException {
+        return getFirst(new Query().setFilter(new PropertyFilter(User.USER_NAME, FilterOperator.EQUAL, userName))
+        		.setFilter(new PropertyFilter(UserExt.USER_PASSWORD, FilterOperator.EQUAL, password)));
+    }
 
     /**
      * Gets the administrator user.

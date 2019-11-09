@@ -273,11 +273,16 @@ public final class Common {
      * Key of URI.
      */
     public static final String URI = "URI";
-
+    
     /**
      * Key of post to community.
      */
     public static final String POST_TO_COMMUNITY = "postToCommunity";
+    
+    /**
+     * Key of silent update.
+     */
+    public static final String SILENT_UPDATE = "silentUpdate";
 
     /**
      * Key of mini postfix.

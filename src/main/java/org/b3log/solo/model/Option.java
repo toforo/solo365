@@ -423,9 +423,9 @@ public final class Option {
         public static final String DEFAULT_BGM_URL = "../music/sakura_tears.mp3";
         
         /**
-         * Default use bgm.
+         * Default not use bgm.
          */
-        public static final String DEFAULT_USE_BGM = "true";
+        public static final String DEFAULT_USE_BGM = "false";
 
         /**
          * Default HTML head to append.

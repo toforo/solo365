@@ -175,7 +175,7 @@ public class OAuthProcessor {
         final HttpServletRequest request = context.getRequest();
         final String openId = userInfo.optString("openId");
         final String userName = userInfo.optString(User.USER_NAME);
-    final String userInitName = userInfo.optString(User.USER_NAME);
+        final String userInitName = userInfo.optString(User.USER_NAME);
         final String userAvatar = userInfo.optString(UserExt.USER_AVATAR);
 
         JSONObject user = userQueryService.getUserByGitHubId(openId);

@@ -77,6 +77,13 @@
                 ${allowCommentLabel}
             </label>
             &nbsp;
+            <span id="silentUpdatePanel">
+                <label class="checkbox">
+                    <input type="checkbox" id="silentUpdate" />
+                    ${silentUpdateLabel}
+                </label>
+                &nbsp;
+            </span>
             <span id="postToCommunityPanel">
                 <label class="checkbox">
                     <input id="postToCommunity" type="checkbox" />

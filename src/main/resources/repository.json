@@ -362,6 +362,12 @@
           "length": 255
         },
         {
+          "name": "userPassword",
+          "description": "密码",
+          "type": "String",
+          "length": 128
+        },
+        {
           "name": "userURL",
           "description": "用户链接地址",
           "type": "String",
