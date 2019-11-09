@@ -46,7 +46,7 @@
                 </#if>
             </a>
             <div class="fn__clear">
-                ${article.articleUpdateDate?string("yyyy-MM-dd")}   &nbsp;·&nbsp;
+                ${article.articlePublishDate?string("yyyy-MM-dd")}   &nbsp;·&nbsp;
                 <a href="${servePath}/authors/${article.authorId}">${article.authorName}</a>
                 &nbsp;·&nbsp;
                 <#list article.articleTags?split(",") as articleTag>
